@@ -1,0 +1,33 @@
+.editorBody {
+  width: 80%;
+  background-color: white;
+  position: absolute;
+    top: 50%;  /* position the top  edge of the element at the middle of the parent */
+    left: 50%; /* position the left edge of the element at the middle of the parent */
+
+    transform: translate(-50%, -50%);
+}
+
+.editorBackground { 
+ position: absolute;
+ width: 100%;
+ height: 100%;
+ top: 0px;
+ left: 0px;
+background-color: rgba(0, 0, 0, 0.8);
+}
+
+.editorCloseButton {
+    float: right;   
+    position: relative;
+    right: 20px;
+    top: 20px;
+}
+
+.headerInput { 
+    font-size: 50;
+}
+
+.editorHeader {
+    width: 500px,
+}
