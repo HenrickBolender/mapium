@@ -2,37 +2,12 @@ import "./App.css";
 import React, { useState } from "react";
 import NoteEditor from "./NoteEditor/NoteEditor";
 import NoteGraph from "./NoteGraph/NoteGraph";
-
-const notes = [
-  {
-    id: 0,
-    header: "Математика",
-    text: "Я очень **люблю** математику!",
-    to: [1, 2],
-    value: 20,
-  },
-  {
-    id: 1,
-    header: "Квадратичные уравнения",
-    text: "Я очень **люблю** квадратичные уравнения",
-  },
-  {
-    id: 2,
-    header: "Деление столбиком",
-    text: "Я люблю делить столбиком!",
-    to: [3],
-    value: 10,
-  },
-  {
-    id: 3,
-    header: "Задачи для деления столбиком",
-    text: "Супер задачи",
-  },
-];
+import Header from "./Header/Header";
+import maps from "./mapsData";
 
 function getNodes(notes) {
   return notes.map((note, i) => {
-    return { id: note.id, label: note.header, value:  note.value ?? 5 };
+    return { id: note.id, label: note.header, value: note.value ?? 5 };
   });
 }
 
@@ -49,38 +24,108 @@ function getEdges(notes) {
   return arr;
 }
 
-
 function App() {
   const [selectedNoteId, setSelectedNode] = useState(-1);
   const [state, setState] = useState({
-    stateNotes: notes,
+    stateNotes: maps[0].notes,
+    currentMapId: maps[0].id,
+    currentMapName: maps[0].name,
     graph: {
-      nodes: getNodes(notes),
-      edges: getEdges(notes),
+      nodes: getNodes(maps[0].notes),
+      edges: getEdges(maps[0].notes),
     },
   });
 
-  const { graph, stateNotes } = state;
+  const { graph, stateNotes, currentMapId, currentMapName } = state;
+  console.log(graph);
+
+  const addNote = (selectedNodeId) => {
+      const newNotes = stateNotes;
+
+      const newNoteId = newNotes.length;
+
+      newNotes.push({        
+        id: newNoteId,
+        header: "Без имени",
+        text: "Супер задачи",
+      })
+      if (selectedNodeId !== undefined ) {
+        const newTo = newNotes[selectedNodeId].to ?? [];
+        newTo.push(newNoteId);
+        newNotes[selectedNodeId].to = newTo;
+      }
+
+      setState({
+        stateNotes: newNotes,
+        graph: {
+          edges: getEdges(newNotes),
+          nodes: getNodes(newNotes)
+        },
+        currentMapId: currentMapId,
+        currentMapName: currentMapName,
+      });
+
+  }
 
   return (
     <div className="App">
-      <NoteGraph graph={graph} onNodeSelect={selectedNodeId => setSelectedNode(selectedNodeId)}/>
-
-      {selectedNoteId != -1 && (
+      <Header
+        userName="HenrickBolender"
+        mapName={state.currentMapName}
+        currentMapId={state.currentMapId}
+        maps={maps}
+        onMapPick={(mapId) => {
+          setState({
+            currentMapId: mapId,
+            currentMapName: maps[mapId].name,
+            graph: {
+              nodes: getNodes(maps[mapId].notes),
+              edges: getEdges(maps[mapId].notes),
+            },
+            stateNotes: maps[mapId].notes,
+          });
+        }}
+      />
+      <NoteGraph
+        graph={graph}
+        addNode={addNote}
+        editNode={(selectedNodeId) => setSelectedNode(selectedNodeId)}
+      />
+      {selectedNoteId !== -1 && (
         <NoteEditor
           onClose={() => setSelectedNode(-1)}
           text={stateNotes[selectedNoteId].text}
-          onTextChange={value => {
-            console.log(value);
+          onTextChange={(value) => {
             let newNotes = stateNotes;
+
+            if (!newNotes[selectedNoteId]) {
+              return;
+            }
+
             newNotes[selectedNoteId].text = value;
-            setState({stateNotes: stateNotes, graph: graph});
+            setState({
+              stateNotes: stateNotes,
+              graph: graph,
+              currentMapId: currentMapId,
+              currentMapName: currentMapName,
+            });
+          }}
+          onHeaderChange={(header) => {
+            let newNotes = stateNotes;
+            newNotes[selectedNoteId].header = header;
+
+            setState({
+              stateNotes: stateNotes,
+              graph: { edges: getEdges(stateNotes), nodes: getNodes(stateNotes) },
+              currentMapId: currentMapId,
+              currentMapName: currentMapName,
+            });
           }}
           header={stateNotes[selectedNoteId].header}
         />
       )}
     </div>
   );
-} 
+}
 
 export default App;

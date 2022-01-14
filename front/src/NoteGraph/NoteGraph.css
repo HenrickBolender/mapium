@@ -1,3 +1,18 @@
 .noteGraph { 
     width: 100%;
 }
+
+.createNoteGraph { 
+    width: 100%;
+    background-color: gray;
+}
+
+.addNoteButton {
+ position: absolute;
+ right: 50px;
+ bottom: 50px;
+}
+
+.addNoteButtonIcon {
+    transform: scale(3.4);
+}
