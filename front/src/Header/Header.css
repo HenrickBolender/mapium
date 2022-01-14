@@ -1,0 +1,21 @@
+.headerBody {
+    width: 100%;
+    height: 60px;
+    position: absolute;
+    top: 0;
+    z-index: 99999;
+}
+
+.headerRightStack {
+    position: relative;
+    float: right;
+    padding-right: 20px;
+    margin-top: 10px;
+}       
+
+.headerLeftStack {
+    position: relative;
+    float: left;
+    padding-left: 20px;
+    margin-top: 10px;
+}   
