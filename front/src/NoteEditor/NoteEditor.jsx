@@ -4,12 +4,10 @@ import "./NoteEditor.css";
 import { TextField } from "@material-ui/core";
 import {
   AccountCircle,
-  Logout,
-  Map,
-  AddBox,
-  ArrowForwardIos,
+  Close
 } from "@mui/icons-material";
 import { Dialog, DialogContent, DialogActions, Button } from "@mui/material";
+import { deleteNote} from "../api"
 
 export default class NoteEditor extends Component {
   constructor(props) {
@@ -21,12 +19,12 @@ export default class NoteEditor extends Component {
       <div className="editorBackground">
         <Dialog disableEscapeKeyDown open={true} maxWidth="lg" fullWidth>
           <DialogContent>
-            <button
+            <Button
+              startIcon={<Close className="quitIcon"></Close>}  
               className={"editorCloseButton"}
               onClick={this.props.onClose}
             >
-              X
-            </button>
+            </Button>
             <TextField
               className={"editorHeader"}
               placeholder="Заголовок"
@@ -34,7 +32,7 @@ export default class NoteEditor extends Component {
               value={this.props.header}
               onChange={(e) => this.props.onHeaderChange(e.target.value)}
               variant="standard"
-              style={{ width: "80%" }}
+              style={{ width: "50%" }}
               inputProps={{
                 style: { fontSize: 50, paddingTop: "50px", lineHeight: "50px" },
               }}
@@ -54,10 +52,8 @@ export default class NoteEditor extends Component {
 
             <DialogActions >
               <Button
-                color="secondary"
-                onClick={() => {
-                  this.setState({ isDialogOpened: false });
-                }}
+                onClick={() => 
+                  this.props.deleteNote(this.props.id)}
               >
                 Удалить
               </Button>

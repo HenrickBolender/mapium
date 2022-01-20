@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Mapium.Providers;
+﻿using System.Linq;
+using Mapium.Database;
+using Mapium.Database.Entities;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace Mapium.Controllers
 {
@@ -12,26 +9,47 @@ namespace Mapium.Controllers
     [Route("[controller]")]
     public class MapsController : ControllerBase
     {
-        private readonly MapsProvider mapsProvider;
+        private readonly MapiumDatabaseContext context;
 
-        public MapsController(MapsProvider mapsProvider)
+        public MapsController(MapiumDatabaseContext context)
         {
-            this.mapsProvider = mapsProvider;
+            this.context = context;
         }
-        
-        
-        [HttpGet]
-        public async Task<JsonResult> Get()
+
+        [HttpGet("")]
+        public JsonResult GetMaps([FromQuery] int userId)
         {
-            var result = await mapsProvider.GetMaps().ConfigureAwait(false);
+            var result = context.Maps.Where(m => m.UserId == userId).Select(m => new {m.Id, m.Name}).ToList();
             return new JsonResult(result);
         }
-        
-        [HttpGet("{mapId}")]
-        public async Task<JsonResult> Get(int mapId)
+
+        [HttpGet("{id}")]
+        public JsonResult GetMap(int id)
         {
-            var result = await mapsProvider.GetMap(mapId).ConfigureAwait(false);
-            return new JsonResult(result);
+            var map = context.Maps.First(m => m.Id == id);
+            var notes = context.Notes.Where(n => n.MapId == id).Select(n => new {n.Header, n.Text, n.Id}).ToList();
+            var edges = context.MapEdges.Where(n => n.MapId == id).Select(e => new {From = e.FromId,To = e.ToId}).ToList();
+
+            return new JsonResult(
+                new
+                {
+                    map.Id,
+                    map.Name,
+                    notes,
+                    edges
+                }
+            );
+        }
+
+        [HttpPost("")]
+        public JsonResult CreateMap([FromQuery] int userId, [FromQuery] string mapName)
+        {
+            var map = new MapEntity {Name = mapName, UserId = userId};
+            context.Maps.Add(map);
+            context.SaveChanges();
+
+            GlobalState.CurrentMapId = map.Id;
+            return new JsonResult(map.Id);
         }
     }
 }

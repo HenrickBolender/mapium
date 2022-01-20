@@ -1,6 +1,12 @@
 import React, { Component } from "react";
 import "./Header.css";
-import { AccountCircle, Logout, Map, AddBox, ArrowForwardIos } from "@mui/icons-material";
+import {
+  AccountCircle,
+  Logout,
+  Map,
+  AddBox,
+  ArrowForwardIos,
+} from "@mui/icons-material";
 import {
   Button,
   Typography,
@@ -12,38 +18,44 @@ import {
   Select,
   DialogActions,
   MenuItem,
+  TextField,
 } from "@mui/material";
+import { getMaps } from "../api";
 
 export default class Header extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isDialogOpened: false,
+      isMapsDialogOpened: false,
+      maps: [],
       selectedMapId: this.props.currentMapId,
+      isCreateMapMode: false,
+      newMapName: "",
     };
   }
 
   render() {
     return (
       <div className="headerBody">
-        {this.state.isDialogOpened && this.renderDialog()}
+        {this.state.isMapsDialogOpened && this.renderMapsDialog()}
         <Stack direction="row" spacing={2} className="headerLeftStack">
           <Button
             className="headerButton"
             variant="contained"
             startIcon={<Map />}
             onClick={() => {
-              this.setState({ isDialogOpened: true });
+              getMaps(this.props.userId).then((maps) => {
+                this.setState({
+                  isMapsDialogOpened: true,
+                  maps,
+                  selectedMapId: maps[0].id,
+                });
+              });
             }}
           >
-            <Typography sx={{ textTransform: "none" }}>
-              Обзор
-            </Typography>
+            <Typography sx={{ textTransform: "none" }}>Обзор</Typography>
           </Button>
-          <Button
-            className="headerButton"
-            startIcon={<ArrowForwardIos />}
-          >
+          <Button className="headerButton" startIcon={<ArrowForwardIos />}>
             <Typography sx={{ textTransform: "none" }}>
               {this.props.mapName}
             </Typography>
@@ -79,40 +91,72 @@ export default class Header extends Component {
     ));
   }
 
-  renderDialog() {
+  renderMapsDialog() {
     return (
       <Dialog disableEscapeKeyDown open={true} maxWidth="sm" fullWidth>
-        <DialogTitle>Выберите Карту</DialogTitle>
+        <DialogTitle>
+          {this.state.isCreateMapMode ? "Создание карты" : "Выберите Карту"}
+        </DialogTitle>
         <DialogContent>
           <Stack spacing={2}>
-            <Box component="form" sx={{ display: "flex", flexWrap: "wrap" }}>
-              <Select
-                fullWidth
-                value={this.state.selectedMapId}
-                onChange={(e) => {
-                  this.setState({ selectedMapId: e.target.value });
-                }}
-              >
-                {this.getMenuItems(this.props.maps)}
-              </Select>
-            </Box>
-            <Button startIcon={<AddBox />}>Создать карту</Button>
+            {this.state.isCreateMapMode ? (
+              <div>
+                <TextField
+                  fullWidth
+                  placeholder="Название карты"
+                  value={this.state.newMapName}
+                  onChange={(e) =>
+                    this.setState({ newMapName: e.target.value })
+                  }
+                ></TextField>
+              </div>
+            ) : (
+              <div>
+                <Box
+                  component="form"
+                  sx={{ display: "flex", flexWrap: "wrap" }}
+                >
+                  <Select
+                    fullWidth
+                    value={this.state.selectedMapId}
+                    onChange={(e) => {
+                      this.setState({ selectedMapId: e.target.value });
+                    }}
+                  >
+                    {this.getMenuItems(this.state.maps)}
+                  </Select>
+                </Box>
+                <Button
+                  fullWidth
+                  startIcon={<AddBox />}
+                  onClick={() => this.setState({ isCreateMapMode: true })}
+                >
+                  Создать карту
+                </Button>
+              </div>
+            )}
+
             <DialogActions>
               <Button
                 onClick={() => {
-                  this.setState({ isDialogOpened: false });
+                  this.setState({ isMapsDialogOpened: false });
                 }}
               >
                 Отменить
               </Button>
               <Button
                 onClick={() => {
-                  this.setState({ isDialogOpened: false });
-                  this.props.onMapPick(this.state.selectedMapId);
+                  this.setState({ isMapsDialogOpened: false });
+                  if (this.state.isCreateMapMode) {
+                    this.props.addMap(this.state.newMapName);
+                  } else {
+                    this.props.onMapPick(this.state.selectedMapId);
+
+                  }
                 }}
                 variant="contained"
               >
-                Открыть
+                {this.state.isCreateMapMode ? "Создать" : "Открыть"}
               </Button>
             </DialogActions>
           </Stack>

@@ -46,7 +46,7 @@ const createModeOptions = {
     color: "#000000",
   },
   nodes: {
-    color: "#fff982",
+    //color: "#fff982",
   },
 };
 
@@ -90,6 +90,13 @@ export default class NoteGraph extends Component {
             <IconButton
               color="primary"
               onClick={() => {
+                console.log(this.props.graph);
+                if (!this.props.graph.nodes || this.props.graph.nodes.length === 0)
+                {
+                  this.props.addNode(null);
+                  return;
+                }
+
                 this.setState({ isCreateModeEnabled: true });
               }}
             >
@@ -97,7 +104,7 @@ export default class NoteGraph extends Component {
             </IconButton>
           ) : (
             <IconButton
-              color="secondary"
+              color="primary"
               onClick={() => {
                 this.setState({ isCreateModeEnabled: false });
               }}

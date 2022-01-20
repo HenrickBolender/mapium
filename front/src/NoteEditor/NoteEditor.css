@@ -20,8 +20,8 @@ background-color: rgba(0, 0, 0, 0.8);
 .editorCloseButton {
     float: right;   
     position: relative;
-    right: 20px;
-    top: 20px;
+    right: 0px;
+    top: 10px;
 }
 
 .headerInput { 
@@ -29,5 +29,9 @@ background-color: rgba(0, 0, 0, 0.8);
 }
 
 .editorHeader {
-    width: 500px,
+    width: 300px,
+}
+
+.quitIcon {
+    transform: scale(2.0);
 }
