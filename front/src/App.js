@@ -4,7 +4,7 @@ import NoteEditor from "./NoteEditor/NoteEditor";
 import NoteGraph from "./NoteGraph/NoteGraph";
 import Header from "./Header/Header";
 import maps from "./mapsData";
-import { getCurrentUser, getMap, addNote as addNoteFromApi , addEdge  as addEdgeFromApi, deleteNote as apiDeleteNote, apiAddMap} from "./api";
+import { getCurrentUser, getMap, addNote as addNoteFromApi , addEdge  as addEdgeFromApi, deleteNote as apiDeleteNote, apiAddMap, apiEditHeader, apiEditText} from "./api";
 
 function App() {
   const [selectedNoteId, setSelectedNode] = useState(-1);
@@ -147,22 +147,25 @@ function App() {
               currentMapId: currentMapId,
               currentMapName: currentMapName,
             });
+
+            apiEditText(selectedNoteId, value);
           }}
           onHeaderChange={(header) => {
-            let newNotes = stateNotes;
+            const newNotes = stateNotes;
             newNotes[selectedNoteId].header = header;
 
             setState({
               stateNotes: stateNotes,
-              graph: {
-                edges: getEdges(stateNotes),
-                nodes: getNodes(stateNotes),
-              },
+              graph: buildGraph(graph.edges, Object.values(newNotes)),
               currentMapId: currentMapId,
               currentMapName: currentMapName,
             });
+
+          apiEditHeader(selectedNoteId, header);
+
           }}
           header={stateNotes[selectedNoteId].header}
+
         />
       )}
     </div>
@@ -193,5 +196,5 @@ function getNotesDict(notes) {
    console.log(dictionary);
    return dictionary;
 }
-  
+
 export default App;

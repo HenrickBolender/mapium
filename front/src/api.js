@@ -57,9 +57,9 @@ export async function addEdge(mapId, fromId, toId) {
   );
 }
 
-export async function editText(noteId, text) {
+export async function apiEditText(noteId, text) {
   await fetch(
-    `${HOST_URL}/notes/${noteId}`,
+    `${HOST_URL}/notes/${noteId}/editText`,
     {
       method: "PUT",
       headers: {
@@ -70,9 +70,9 @@ export async function editText(noteId, text) {
   );
 }
 
-export async function editHeader(noteId, header) {
+export async function apiEditHeader(noteId, header) {
   await fetch(  
-    `${HOST_URL}/notes/${noteId}`,
+    `${HOST_URL}/notes/${noteId}/editHeader`,
     {
       method: "PUT",
       headers: {
