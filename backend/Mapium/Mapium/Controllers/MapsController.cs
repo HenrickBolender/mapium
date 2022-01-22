@@ -51,5 +51,18 @@ namespace Mapium.Controllers
             GlobalState.CurrentMapId = map.Id;
             return new JsonResult(map.Id);
         }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteMap(int id)
+        {
+            var mapToDelete = context.Maps.FirstOrDefault(map => map.Id == id);
+
+            if (mapToDelete == null)
+                return NotFound(id);
+
+            context.Maps.Remove(mapToDelete);
+            context.SaveChanges();
+            return Ok(id);
+        }
     }
 }
