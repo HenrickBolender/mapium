@@ -32,11 +32,12 @@ namespace Mapium.Controllers
                 GlobalState.CurrentMapId = map.Id;
             }
 
-                return new JsonResult(new
+            return new JsonResult(new
             {
                 user, GlobalState.CurrentMapId,
             });
         }
+
 
         [HttpGet("switch")]
         public void Switch([FromQuery] int userId)
@@ -45,7 +46,16 @@ namespace Mapium.Controllers
             var map = context.Maps.First(m => m.UserId == userId);
             GlobalState.CurrentMapId = map.Id;
         }
-
+        
+        [HttpGet("switchUser")]
+        public void Switch([FromQuery] string userName)
+        {
+            var user = context.Users.First(u => u.Name.Equals(userName));
+            GlobalState.CurrentUserId = user.Id;
+            var map = context.Maps.First(m => m.UserId == user.Id);
+            GlobalState.CurrentMapId = map.Id;
+        }
+        
         [HttpGet("logout")]
         public void Logout()
         {

@@ -5,6 +5,14 @@ export async function getCurrentUser() {
   return response.json();
 }
 
+export async function switchUser(userName) {
+  const response = await fetch(`${HOST_URL}/users/switchUser?userName=${userName}`);
+}
+
+export async function logoutUser() {
+  const response = await fetch(`${HOST_URL}/users/logout`);
+}
+
 export async function getMaps(userId) {
   const response = await fetch(`${HOST_URL}/maps?userId=${userId}`);
   return response.json();

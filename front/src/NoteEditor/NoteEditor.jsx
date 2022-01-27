@@ -41,8 +41,8 @@ export default class NoteEditor extends Component {
             <br />
             <br />
             <MDEditor
-              commands={[]}
-              extraCommands={[]}
+              //commands={[]}
+              //extraCommands={[]}
               textareaProps={{
                 placeholder: "Please enter Markdown text",
               }}

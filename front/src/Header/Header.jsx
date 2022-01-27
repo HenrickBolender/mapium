@@ -74,6 +74,7 @@ export default class Header extends Component {
           <Button
             className="headerButton"
             variant="contained"
+            onClick={this.props.logout}
             startIcon={<Logout />}
           >
             <Typography sx={{ textTransform: "none" }}>Выйти</Typography>
@@ -126,6 +127,7 @@ export default class Header extends Component {
                     {this.getMenuItems(this.state.maps)}
                   </Select>
                 </Box>
+                <br/>
                 <Button
                   fullWidth
                   startIcon={<AddBox />}

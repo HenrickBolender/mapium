@@ -61,7 +61,7 @@ namespace Mapium.Controllers
                 return NotFound(id);
 
             context.Maps.Remove(mapToDelete);
-            context.SaveChanges();
+            context.SaveChanges();          
             return Ok(id);
         }
     }
